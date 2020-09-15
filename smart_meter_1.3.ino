@@ -126,7 +126,7 @@ void UpdateGas()
   if(prevGAS!=mGAS)
   {
     char sValue[10];
-    sprintf(sValue, "%d", mGAS);
+    sprintf(sValue, "%f", mGAS/1000.0);
     if(SendToDomo(domoticzGasIdx, 0, sValue))
       prevGAS=mGAS;
   }
@@ -135,8 +135,9 @@ void UpdateGas()
 void UpdateElectricity()
 {
   char sValue[255];
-//  sprintf(sValue, "%d;%d;%d;%d;%d;%d", mEVLT, mEVHT, mEOLT, mEOHT, mEAV, mEAT);
-  sprintf(sValue, "%f;%f;%f;%f;%d;%d", float(mEVLT)/1000.0, float(mEVHT)/1000.0, float(mEOLT)/1000.0, float(mEOHT)/1000.0, mEAV, mEAT);
+//  sprintf(sValue, "%d;%d;%d;%d;%d;%d", mEVLT, mEVHT, mEOLT, mEOHT, mEAV, mEAT);  //Original value from Jan ten Hove
+//  sprintf(sValue, "%f;%f;%f;%f;%d;%d", float(mEVLT)/1000.0, float(mEVHT)/1000.0, float(mEOLT)/1000.0, float(mEOHT)/1000.0, mEAV, mEAT); //First try to make kWh from Wh, but it seems slow, generating more "Invalid CRC found" error messages...is this due to required processing time?
+   sprintf(sValue, "%f;%f;%f;%f;%d;%d", mEVLT/1000.0, mEVHT/1000.0, mEOLT/1000.0, mEOHT/1000.0, mEAV, mEAT); //maybe not relevant, but removing the float from first try and dividing by 1000.0 generates less "Invalid CRC found" error messages...
   SendToDomo(domoticzEneryIdx, 0, sValue);
 }
 
@@ -267,7 +268,6 @@ bool decodeTelegram(int len) {
     mEAT = getValue(telegram, len);
    
 
- 
   // 0-1:24.2.1(150531200000S)(00811.923*m3)
   // 0-1:24.2.3 = Gas (Fluvius) on Siconia S211 meter
   if (strncmp(telegram, "0-1:24.2.3", strlen("0-1:24.2.3")) == 0) 
@@ -275,7 +275,6 @@ bool decodeTelegram(int len) {
 
   return validCRCFound;
 }
-
 
 void readTelegram() {
   if (mySerial.available()) {
