@@ -9,3 +9,5 @@ Following parameters are sent to domoticz
  daytime production
  nighttime production
  realtime consumption/production
+
+Watch this video for background information: https://youtu.be/bg7HV00wcss
